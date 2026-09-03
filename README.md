@@ -77,7 +77,7 @@ Password: kalau `ADMIN_PASSWORD` di `.env` kosong, seeder **generate password ac
    - `APP_KEY` → **generate baru** untuk production (`php artisan key:generate --show`), **jangan** reuse APP_KEY development.
    - `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://<domain-railway-mu>`.
    - `ADMIN_EMAIL` + `ADMIN_PASSWORD` (set password kuat untuk production).
-4. `nixpacks.toml` sudah mengatur build + menjalankan `php artisan migrate --force` saat start.
+4. `nixpacks.toml` mengatur build **Composer-only** (tanpa Node/npm — demo ini tidak pakai Vite, aset CSS/JS statis sudah di-commit di `public/`) dan menjalankan `php artisan migrate --force && php artisan optimize` saat start.
 5. Seed data awal (produk contoh) di production — jalankan **sekali** via Railway shell:
    `php artisan db:seed --force`
 
