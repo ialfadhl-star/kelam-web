@@ -5,8 +5,14 @@
 # saja — tidak ada `npm install`/`npm run build` (yang sebelumnya bikin builder
 # OOM / exit 137).
 #
-# PHP dipilih otomatis oleh Nixpacks dari composer.json ("php": "^8.3").
-# Ekstensi pdo_pgsql diaktifkan lewat require "ext-pdo_pgsql" di composer.json.
+# PIN VERSI PHP: Nixpacks memilih versi PHP dari constraint composer.json
+# "require": { "php": "^8.4" } — inilah mekanisme resmi Nixpacks untuk PHP
+# (berbeda dari Node yang pakai NIXPACKS_NODE_VERSION; PHP tidak punya env var
+# versi terpisah, jadi composer.json yang menentukan). Karena "^8.4" tidak
+# dipenuhi oleh 8.3, builder wajib memakai 8.4.x — bukan lagi default 8.3.
+# composer.json juga meng-set config.platform.php = 8.4.25 supaya resolusi
+# Composer eksplisit menargetkan 8.4. Ekstensi pdo_pgsql diaktifkan lewat
+# require "ext-pdo_pgsql".
 
 [phases.install]
 cmds = [
