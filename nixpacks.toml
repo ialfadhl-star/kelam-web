@@ -1,23 +1,20 @@
-# Konfigurasi build & start untuk Railway (Nixpacks) — KELAM (Laravel + PostgreSQL)
-# Railway akan menjalankan build lalu start. Migrasi dijalankan saat start
-# supaya database (plugin PostgreSQL Railway) sudah tersedia.
-
-[phases.setup]
-nixPkgs = ["php84", "php84Packages.composer", "nodejs_20"]
+# Build & start untuk Railway (Nixpacks) — KELAM (Laravel + PostgreSQL, TANPA Node/Vite).
+#
+# Demo ini tidak memakai Vite/npm sama sekali: CSS & JS adalah file statis di
+# public/css & public/js yang sudah di-commit. Karena itu build cukup Composer
+# saja — tidak ada `npm install`/`npm run build` (yang sebelumnya bikin builder
+# OOM / exit 137).
+#
+# PHP dipilih otomatis oleh Nixpacks dari composer.json ("php": "^8.3").
+# Ekstensi pdo_pgsql diaktifkan lewat require "ext-pdo_pgsql" di composer.json.
 
 [phases.install]
 cmds = [
-  "composer install --no-dev --optimize-autoloader --no-interaction",
+  "composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist",
 ]
 
-[phases.build]
-cmds = [
-  "php artisan config:cache",
-  "php artisan route:cache",
-  "php artisan view:cache",
-]
+# Tidak ada [phases.build]: tidak perlu compile aset. Cache config/route/view
+# dijalankan saat start (bukan build) supaya env var Railway sudah tersedia.
 
 [start]
-# Jalankan migrasi (tanpa seed produk agar tidak menimpa data) lalu serve.
-# Untuk seed awal di production, jalankan sekali manual: php artisan db:seed --force
-cmd = "php artisan migrate --force && php artisan serve --host 0.0.0.0 --port ${PORT:-8080}"
+cmd = "php artisan migrate --force && php artisan optimize && php artisan serve --host 0.0.0.0 --port ${PORT:-8080}"
